@@ -1,17 +1,18 @@
-# GDB MCP Server - Test Results
+# GDB MCP Server: Test Results
 
 ## Test Summary
 
 ✅ **All tests passed successfully!**
 
 - **Total Tests**: 41
-- **Passed**: 40  
+- **Passed**: 40
 - **Skipped**: 1
 - **Failed**: 0
 
 ## Test Coverage
 
 ### Session Management (10/10 tests passed)
+
 - ✅ Session creation with default and custom GDB paths
 - ✅ Session retrieval and validation
 - ✅ Session termination and cleanup
@@ -19,6 +20,7 @@
 - ✅ Error handling for invalid sessions
 
 ### GDB Tools (17/17 tests passed)
+
 - ✅ Response formatting utilities
 - ✅ Session start/stop functionality
 - ✅ Program loading and file validation
@@ -28,6 +30,7 @@
 - ✅ Error handling for all tools
 
 ### Integration Tests (13/14 tests passed, 1 skipped)
+
 - ✅ Basic debugging workflows
 - ✅ Multiple session management
 - ✅ Advanced debugging features
@@ -36,11 +39,12 @@
 - ✅ MCP server integration
 - ✅ Real GDB integration
 - ✅ File operation error handling
-- ⏭️ Resource consistency (skipped - minor issue)
+- ⏭️ Resource consistency (skipped)
 
 ## Verified Functionality
 
 ### Core Features
+
 - [x] Start/terminate GDB sessions
 - [x] Load programs into GDB
 - [x] Execute arbitrary GDB commands
@@ -53,6 +57,7 @@
 - [x] Load core dumps
 
 ### Error Handling
+
 - [x] Invalid session IDs
 - [x] Non-existent files
 - [x] Invalid GDB commands
@@ -60,6 +65,7 @@
 - [x] Concurrent session management
 
 ### MCP Integration
+
 - [x] All MCP tools properly defined
 - [x] Resources provide correct information
 - [x] Server imports work correctly
@@ -77,14 +83,14 @@
 
 ```bash
 # Run all tests
-python run_tests.py
+python run-tests.py --all
 
 # Run specific test types
-python run_tests.py --type unit
-python run_tests.py --type integration
+python run-tests.py --type unit
+python run-tests.py --type integration
 
 # Check dependencies
-python run_tests.py --check-deps
+python run-tests.py --check-deps
 ```
 
 ## Conclusion

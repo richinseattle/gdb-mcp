@@ -2,7 +2,9 @@
 
 A Model Context Protocol (MCP) server that enables LLM clients to interact with GDB for debugging and binary analysis.
 
-<img src="images/gdb-mcp.png" alt="GDB MCP Server" width="600">
+<p align="center">
+  <img src="images/gdb-mcp.png" alt="GDB MCP Server" width="600">
+</p>
 
 ## Quick Start
 

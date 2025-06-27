@@ -1,0 +1,3 @@
+can you load this binary to gdb, break on main, run and examine memory and give me its information:
+
+/home/youruser/dev/personal/GDB-MCP/examples/example

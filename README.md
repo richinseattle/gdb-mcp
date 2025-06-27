@@ -70,54 +70,48 @@ If you're not using WSL:
 ## Available Tools
 
 ### Session Management
+
 - `gdb_start()` - Start new GDB session
 - `gdb_terminate(session_id)` - Terminate session
 - `gdb_list_sessions()` - List active sessions
 
 ### Program Loading
+
 - `gdb_load(session_id, program_path)` - Load program
 - `gdb_attach(session_id, pid)` - Attach to process
 - `gdb_load_core(session_id, core_file)` - Load core dump
 
 ### Execution Control
-- `gdb_continue(session_id)` - Continue execution
-- `gdb_step(session_id)` - Step into functions
-- `gdb_next(session_id)` - Step over functions
-- `gdb_finish(session_id)` - Finish current function
+
+- `gdb_continue(session_id)`: Continue execution
+- `gdb_step(session_id)`: Step into functions
+- `gdb_next(session_id)`: Step over functions
+- `gdb_finish(session_id)`: Finish current function
 
 ### Debugging
-- `gdb_set_breakpoint(session_id, location)` - Set breakpoint
-- `gdb_backtrace(session_id)` - Show call stack
-- `gdb_print(session_id, expression)` - Print expression
-- `gdb_examine(session_id, address)` - Examine memory
-- `gdb_info_registers(session_id)` - Show registers
+
+- `gdb_set_breakpoint(session_id, location)`: Set breakpoint
+- `gdb_backtrace(session_id)`: Show call stack
+- `gdb_print(session_id, expression)`: Print expression
+- `gdb_examine(session_id, address)`: Examine memory
+- `gdb_info_registers(session_id)`: Show registers
 
 ### Advanced Analysis
-- `gdb_disassemble_function(session_id, function_name)` - Disassemble function
-- `gdb_disassemble_around_pc(session_id, count)` - Disassemble around PC
-- `gdb_get_local_variables(session_id)` - Get local variables
-- `gdb_get_stack_frames(session_id)` - Get stack information
-- `gdb_get_register_values(session_id)` - Get register values
-- `gdb_read_memory_bytes(session_id, address, count)` - Read memory
-- `gdb_get_thread_info(session_id)` - Get thread information
-- `gdb_get_breakpoint_list(session_id)` - List breakpoints
-- `gdb_set_watchpoint(session_id, expression)` - Set watchpoint
-- `gdb_get_symbol_info(session_id, symbol)` - Get symbol info
+
+- `gdb_disassemble_function(session_id, function_name)`: Disassemble function
+- `gdb_disassemble_around_pc(session_id, count)`: Disassemble around PC
+- `gdb_get_local_variables(session_id)`: Get local variables
+- `gdb_get_stack_frames(session_id)`: Get stack information
+- `gdb_get_register_values(session_id)`: Get register values
+- `gdb_read_memory_bytes(session_id, address, count)`: Read memory
+- `gdb_get_thread_info(session_id)`: Get thread information
+- `gdb_get_breakpoint_list(session_id)`: List breakpoints
+- `gdb_set_watchpoint(session_id, expression)`: Set watchpoint
+- `gdb_get_symbol_info(session_id, symbol)`: Get symbol info
 
 ### General
-- `gdb_command(session_id, command)` - Execute any GDB command
 
-## Example Usage
-
-```
-Start a GDB session and load my binary /path/to/program, set a breakpoint at main, run it, and show me the disassembly when it stops.
-```
-
-## Requirements
-
-- Python 3.11+
-- GDB installed on system
-- uv package manager
+- `gdb_command(session_id, command)`: Execute any GDB command
 
 ## Testing
 

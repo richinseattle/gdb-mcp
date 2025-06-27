@@ -16,7 +16,7 @@ uv run server.py
 
 ## Integration
 
-Note that you can use `uv run` to run the server.py script or you can use `uv venv` to create a virtual environment and then run the /home/youruser/dev/personal/GDB-MCP/.venv/bin/python /home/youruser/dev/personal/GDB-MCP/server.py.
+Note that you can use `uv run` to run the server.py script or you can use `uv venv` to create a virtual environment and then run `/home/youruser/dev/personal/GDB-MCP/.venv/bin/python /home/youruser/dev/personal/GDB-MCP/server.py`.
 
 ### Claude Desktop
 

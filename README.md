@@ -71,15 +71,15 @@ If you're not using WSL:
 
 ### Session Management
 
-- `gdb_start()` - Start new GDB session
-- `gdb_terminate(session_id)` - Terminate session
-- `gdb_list_sessions()` - List active sessions
+- `gdb_start()`: Start new GDB session
+- `gdb_terminate(session_id)`: Terminate session
+- `gdb_list_sessions()`: List active sessions
 
 ### Program Loading
 
-- `gdb_load(session_id, program_path)` - Load program
-- `gdb_attach(session_id, pid)` - Attach to process
-- `gdb_load_core(session_id, core_file)` - Load core dump
+- `gdb_load(session_id, program_path)`: Load program
+- `gdb_attach(session_id, pid)`: Attach to process
+- `gdb_load_core(session_id, core_file)`: Load core dump
 
 ### Execution Control
 

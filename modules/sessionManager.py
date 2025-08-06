@@ -17,8 +17,7 @@ class GDBSessionManager:
         """Create a new GDB session and return its ID."""
         session_id = str(uuid.uuid4())
         try:
-            # GdbController expects a command list, not a gdb_path parameter
-            gdb_controller = GdbController(command=[gdb_path])
+            gdb_controller = GdbController(command=[gdb_path, "--interpreter=mi3"])
             self.sessions[session_id] = gdb_controller
             logger.info(f"Started GDB session: {session_id}")
             return session_id

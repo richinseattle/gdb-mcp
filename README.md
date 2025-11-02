@@ -102,62 +102,18 @@ pip3 install mcp pygdbmi --break-system-packages
 - `lldb_list_sessions()`: List all active LLDB sessions
 - `lldb_command(session_id, command)`: Execute arbitrary LLDB command
 
-### GDB-Specific Tools
-
-#### Session Management
+### GDB-Specific Tools (Simplified)
 - `gdb_start(gdb_path)`: Start new GDB debugging session
 - `gdb_terminate(session_id)`: Terminate GDB debugging session
 - `gdb_list_sessions()`: List all active GDB sessions
+- `gdb_command(session_id, command)`: Execute any GDB command
 
-#### Program Control
-- `gdb_load(session_id, program_path)`: Load executable into GDB
-- `gdb_attach(session_id, pid)`: Attach GDB to running process
-- `gdb_load_core(session_id, core_file)`: Load core dump file for analysis
-- `gdb_continue(session_id)`: Continue program execution
-- `gdb_step(session_id)`: Step into functions
-- `gdb_next(session_id)`: Step over function calls
-- `gdb_finish(session_id)`: Execute until current function returns
-
-#### Breakpoints & Watchpoints
-- `gdb_set_breakpoint(session_id, location)`: Set breakpoint at specified location
-- `gdb_delete_breakpoint(session_id, number)`: Delete specific breakpoint
-- `gdb_enable_breakpoint(session_id, number)`: Enable specific breakpoint
-- `gdb_disable_breakpoint(session_id, number)`: Disable specific breakpoint
-- `gdb_get_breakpoint_list(session_id)`: List all breakpoints with details
-- `gdb_set_watchpoint(session_id, expression, type)`: Set watchpoint on variable/expression
-
-#### Inspection & Analysis
-- `gdb_backtrace(session_id)`: Show call stack/backtrace
-- `gdb_print(session_id, expression)`: Print value of expression
-- `gdb_examine(session_id, address, format)`: Examine memory at address
-- `gdb_info_registers(session_id)`: Display processor registers
-- `gdb_get_local_variables(session_id, print_values)`: Get local variables in current frame
-- `gdb_get_function_arguments(session_id, print_values)`: Get function arguments for all frames
-- `gdb_get_stack_frames(session_id, low_frame, high_frame)`: Get detailed stack frame information
-- `gdb_evaluate_expression(session_id, expression)`: Evaluate expression with structured output
-
-#### Memory & Disassembly
-- `gdb_disassemble_function(session_id, function_name, mixed_mode)`: Disassemble function
-- `gdb_disassemble_address_range(session_id, start_addr, end_addr, mixed_mode)`: Disassemble memory range
-- `gdb_disassemble_around_pc(session_id, instruction_count, mixed_mode)`: Disassemble around program counter
-- `gdb_read_memory_bytes(session_id, address, byte_count)`: Read raw memory bytes
-- `gdb_examine(session_id, address, format_spec)`: Examine memory with format specification
-
-#### Register Operations
-- `gdb_get_register_names(session_id)`: Get list of all register names
-- `gdb_get_register_values(session_id, register_numbers)`: Get register values
-- `gdb_get_changed_registers(session_id)`: Get registers that changed since last stop
-
-#### Thread Management
-- `gdb_get_thread_info(session_id)`: Get information about all threads
-- `gdb_switch_thread(session_id, thread_id)`: Switch to different thread
-
-#### Symbol & Source Information
-- `gdb_get_symbol_info(session_id, symbol_name)`: Get information about symbol
-- `gdb_list_source_files(session_id)`: List all source files in program
-
-#### General
-- `gdb_command(session_id, command)`: Execute any arbitrary GDB command
+> **Note**: Use `gdb_command()` for all GDB operations. Examples:
+> - `gdb_command(session_id, "file /path/to/program")`: Load program
+> - `gdb_command(session_id, "break main")`: Set breakpoint
+> - `gdb_command(session_id, "run")`: Run program
+> - `gdb_command(session_id, "print variable")`: Print variables
+> - `gdb_command(session_id, "bt")`: Show backtrace
 
 ## Usage Examples
 

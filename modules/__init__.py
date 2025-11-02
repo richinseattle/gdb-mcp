@@ -3,6 +3,7 @@
 from .base import DebuggerSessionManager, DebuggerTools
 from .gdb import GDBSessionManager, GDBTools
 from .lldb import LLDBSessionManager, LLDBTools
+from .debuggerFactory import DebuggerFactory
 
 __all__ = [
     'DebuggerSessionManager',
@@ -11,4 +12,5 @@ __all__ = [
     'GDBTools',
     'LLDBSessionManager', 
     'LLDBTools',
+    'DebuggerFactory',
 ]

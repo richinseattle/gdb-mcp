@@ -12,67 +12,42 @@ def _get_lldb_python_path():
     import subprocess
     import os
     
-    try:
-        # Use lldb -P to get the correct Python path
-        result = subprocess.run(['lldb', '-P'], capture_output=True, text=True, timeout=5)
-        if result.returncode == 0:
-            path = result.stdout.strip()
-            if os.path.exists(path):
-                return path
-    except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.CalledProcessError):
-        pass
+    # Try Homebrew LLDB first (works with modern Python)
+    homebrew_lldb = '/opt/homebrew/opt/llvm/bin/lldb'
+    if os.path.exists(homebrew_lldb):
+        try:
+            result = subprocess.run([homebrew_lldb, '-P'], capture_output=True, text=True, timeout=5)
+            if result.returncode == 0:
+                path = result.stdout.strip()
+                if os.path.exists(path):
+                    return path
+        except (subprocess.TimeoutExpired, FileNotFoundError, subprocess.CalledProcessError):
+            pass
     
     return None
 
-# Setup LLDB path but don't import yet (lazy loading)
-_lldb_path_setup = False
+LLDB_AVAILABLE = False
 lldb = None
 
-def _setup_lldb_import():
-    """Setup LLDB import path and try to import."""
-    global _lldb_path_setup, lldb
+try:
+    import sys
+    import os
     
-    if _lldb_path_setup:
-        return lldb is not None
+    lldb_path = _get_lldb_python_path()
+    if lldb_path and lldb_path not in sys.path:
+        sys.path.insert(0, lldb_path)
     
-    _lldb_path_setup = True
-    
-    try:
-        import sys
-        import os
-        
-        # Get the correct LLDB Python path
-        lldb_path = _get_lldb_python_path()
-        if lldb_path and lldb_path not in sys.path:
-            sys.path.insert(0, lldb_path)
-            # Also set PYTHONPATH for subprocess calls
-            current_pythonpath = os.environ.get('PYTHONPATH', '')
-            if lldb_path not in current_pythonpath:
-                os.environ['PYTHONPATH'] = f"{lldb_path}:{current_pythonpath}" if current_pythonpath else lldb_path
-        
-        import lldb as _lldb
-        lldb = _lldb
-        logger.info("LLDB Python module loaded successfully")
-        return True
-        
-    except ImportError as e:
-        import sys
-        error_msg = str(e)
-        
-        if "cannot import name '_lldb'" in error_msg and "cpython-39" in error_msg:
-            logger.warning(f"LLDB Python bindings are compiled for Python 3.9, but you're using Python {sys.version_info.major}.{sys.version_info.minor}. "
-                         f"To use LLDB, either:\n"
-                         f"1. Use system Python 3.9: PYTHONPATH=/Library/Developer/CommandLineTools/Library/PrivateFrameworks/LLDB.framework/Resources/Python /usr/bin/python3\n"
-                         f"2. Or run the server with system Python instead of uv")
-        else:
-            logger.warning(f"LLDB Python module not available: {e}")
-        
-        logger.info("LLDB functionality will be disabled. GDB functionality remains available.")
-        return False
+    import lldb
+    LLDB_AVAILABLE = True
+    logger.info("LLDB Python module loaded successfully")
+except ImportError as e:
+    LLDB_AVAILABLE = False
+    lldb = None
+    logger.warning(f"LLDB Python module not available: {e}. LLDB functionality will be disabled.")
 
 def is_lldb_available() -> bool:
     """Check if LLDB is available."""
-    return _setup_lldb_import()
+    return LLDB_AVAILABLE
 
 
 class LLDBSessionManager(DebuggerSessionManager):
@@ -81,7 +56,7 @@ class LLDBSessionManager(DebuggerSessionManager):
         self.sessions: Dict[str, Any] = {}
     
     def create_session(self, debugger_path: Optional[str] = None) -> str:
-        if not is_lldb_available():
+        if not LLDB_AVAILABLE:
             raise RuntimeError("LLDB Python module not available")
         
         session_id = str(uuid.uuid4())
@@ -104,7 +79,7 @@ class LLDBSessionManager(DebuggerSessionManager):
             raise
     
     def get_session(self, session_id: str) -> Any:
-        if not is_lldb_available():
+        if not LLDB_AVAILABLE:
             raise RuntimeError("LLDB Python module not available")
         
         if session_id not in self.sessions:
@@ -112,7 +87,7 @@ class LLDBSessionManager(DebuggerSessionManager):
         return self.sessions[session_id]
     
     def terminate_session(self, session_id: str) -> bool:
-        if not is_lldb_available():
+        if not LLDB_AVAILABLE:
             return False
             
         if session_id not in self.sessions:
@@ -146,7 +121,4 @@ class LLDBSessionManager(DebuggerSessionManager):
     @staticmethod
     def is_available() -> bool:
         """Check if LLDB is available on this system."""
-        return is_lldb_available()
-
-# Export the availability check
-LLDB_AVAILABLE = is_lldb_available
+        return LLDB_AVAILABLE

@@ -47,3 +47,13 @@ class GDBSessionManager(DebuggerSessionManager):
     
     def has_session(self, session_id: str) -> bool:
         return session_id in self.sessions
+    
+    @staticmethod
+    def is_available() -> bool:
+        """Check if GDB is available on this system."""
+        import subprocess
+        try:
+            result = subprocess.run(['gdb', '--version'], capture_output=True, timeout=5)
+            return result.returncode == 0
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            return False

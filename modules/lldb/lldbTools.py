@@ -4,8 +4,13 @@ import logging
 from pathlib import Path
 from typing import Optional, Callable
 from functools import wraps
-from .sessionManager import LLDBSessionManager, is_lldb_available
+from .sessionManager import LLDBSessionManager, LLDB_AVAILABLE
 from ..base.debuggerBase import DebuggerTools
+
+if LLDB_AVAILABLE:
+    import lldb
+else:
+    lldb = None
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +20,7 @@ def handle_lldb_errors(operation: str) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs) -> str:
             try:
-                if not is_lldb_available():
+                if not LLDB_AVAILABLE:
                     return f"Error {operation}: LLDB not available on this system"
                 return func(*args, **kwargs)
             except Exception as e:
@@ -79,17 +84,11 @@ class LLDBTools(DebuggerTools):
     
     @handle_lldb_errors("executing command")
     def execute_command(self, session_id: str, command: str) -> str:
-        lldb = _get_lldb()
-        if not lldb:
-            return "Error: LLDB not available"
-            
         debugger = self.session_manager.get_session(session_id)
         
-        # Get command interpreter
         interpreter = debugger.GetCommandInterpreter()
         result = lldb.SBCommandReturnObject()
         
-        # Execute command
         interpreter.HandleCommand(command, result)
         
         if result.Succeeded():
@@ -471,11 +470,4 @@ class LLDBTools(DebuggerTools):
     @staticmethod
     def is_available() -> bool:
         """Check if LLDB is available on this system."""
-        return is_lldb_available()
-
-def _get_lldb():
-    """Get LLDB module if available."""
-    if is_lldb_available():
-        from .sessionManager import lldb
-        return lldb
-    return None
+        return LLDB_AVAILABLE

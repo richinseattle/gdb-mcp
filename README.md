@@ -67,6 +67,19 @@ If you're not using WSL:
   }
 ```
 
+### Windsurf
+
+```json
+{
+  "mcpServers": {
+    "debugger-mcp": {
+      "command": "python3",
+      "args": ["/Users/youruser/dev/GDB-MCP/server.py"]
+    }
+  }
+}
+```
+
 ## Experimental LLDB Support (macOS)
 
 This project includes experimental native LLDB support alongside GDB, with automatic debugger selection.
@@ -89,61 +102,34 @@ pip3 install mcp pygdbmi --break-system-packages
 
 ## Available Tools
 
-### Unified Tools (Auto-detect debugger)
+### Unified Tools
+
 - `debugger_status()`: Show available debuggers and their status
 - `debugger_start()`: Start debugging session with auto-detected debugger
 - `debugger_terminate(session_id)`: Terminate debugging session
 - `debugger_list_sessions()`: List all active debugging sessions
 - `debugger_command(session_id, command)`: Execute debugger command
 
-### LLDB-Specific Tools (Recommended for LLDB)
+### LLDB-Specific Tools
+
 - `lldb_start()`: Start new LLDB debugging session
 - `lldb_terminate(session_id)`: Terminate LLDB debugging session
 - `lldb_list_sessions()`: List all active LLDB sessions
 - `lldb_command(session_id, command)`: Execute arbitrary LLDB command
 
-### GDB-Specific Tools (Simplified)
+### GDB-Specific Tools
+
 - `gdb_start(gdb_path)`: Start new GDB debugging session
 - `gdb_terminate(session_id)`: Terminate GDB debugging session
 - `gdb_list_sessions()`: List all active GDB sessions
 - `gdb_command(session_id, command)`: Execute any GDB command
 
-> **Note**: Use `gdb_command()` for all GDB operations. Examples:
-> - `gdb_command(session_id, "file /path/to/program")`: Load program
-> - `gdb_command(session_id, "break main")`: Set breakpoint
-> - `gdb_command(session_id, "run")`: Run program
-> - `gdb_command(session_id, "print variable")`: Print variables
-> - `gdb_command(session_id, "bt")`: Show backtrace
-
-## Usage Examples
-
-### Running the Server
-
-**With uv (recommended for development):**
-```bash
-uv run python server.py
-```
-
-**With system Python:**
-```bash
-python3 server.py
-```
-
-### MCP Configuration
-```json
-{
-  "mcpServers": {
-    "debugger-mcp": {
-      "command": "python3",
-      "args": ["/Users/ssmadi/dev/GDB-MCP/server.py"]
-    }
-  }
-}
-```
+> **Note**: Use `*_command()` functions for all advanced debugger operations, your LLM client should already know how to use it, but it doesn't hurt to mention it.
 
 ### Checking Status
 
 You can verify debugger availability:
+
 ```python
 from modules.lldb import LLDBSessionManager
 from modules.gdb import GDBSessionManager

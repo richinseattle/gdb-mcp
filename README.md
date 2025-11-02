@@ -113,6 +113,48 @@ If you're not using WSL:
 
 - `gdb_command(session_id, command)`: Execute any GDB command
 
+## LLDB Support (macOS)
+
+This project includes experimental LLDB support alongside GDB. However, there are some compatibility considerations:
+
+### Python Version Compatibility
+
+LLDB Python bindings on macOS are compiled for the system Python version (typically Python 3.9). If you're using a different Python version (like Python 3.11 with uv), LLDB functionality will be disabled with a helpful error message.
+
+### Using LLDB with System Python
+
+To use LLDB functionality, you have several options:
+
+**Option 1: Run with system Python**
+```bash
+export PYTHONPATH="/Library/Developer/CommandLineTools/Library/PrivateFrameworks/LLDB.framework/Resources/Python"
+
+/usr/bin/python3 server.py
+```
+
+**Option 2: Test LLDB availability**
+
+```bash
+python3 -c "
+import sys
+sys.path.insert(0, '/Library/Developer/CommandLineTools/Library/PrivateFrameworks/LLDB.framework/Resources/Python')
+import lldb
+print('LLDB works!')
+"
+```
+
+**Option 3: Use both debuggers**
+
+The server gracefully handles LLDB unavailability, so GDB functionality remains fully available even when LLDB is disabled.
+
+### Checking LLDB Status
+
+You can check if LLDB is available:
+```python
+from modules.lldb import LLDBSessionManager
+print("LLDB available:", LLDBSessionManager.is_available())
+```
+
 ## Testing
 
 ```bash

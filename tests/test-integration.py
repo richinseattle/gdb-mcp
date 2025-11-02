@@ -1,11 +1,7 @@
 """Integration tests for the complete GDB MCP workflow."""
 
 import pytest
-import os
-import subprocess
-import tempfile
-from modules.sessionManager import GDBSessionManager
-from modules.gdbTools import GDBTools
+from modules.gdb import GDBSessionManager, GDBTools
 
 
 @pytest.mark.integration
@@ -19,7 +15,6 @@ class TestGDBMCPIntegration:
     
     def teardown_method(self):
         """Clean up after tests."""
-        # Clean up any remaining sessions
         for session_id in list(self.sessionManager.sessions.keys()):
             try:
                 self.sessionManager.terminate_session(session_id)
@@ -32,25 +27,20 @@ class TestGDBMCPIntegration:
         if not test_program['compiled']:
             pytest.skip("Test program could not be compiled")
         
-        # Start GDB session
         start_result = self.gdbTools.start_session()
         assert "GDB session started successfully" in start_result
         session_id = start_result.split("Session ID: ")[1].strip()
         
         try:
-            # Load the test program
             load_result = self.gdbTools.load_program(session_id, test_program['binary_file'])
             assert "Error" not in load_result or "done" in load_result.lower()
             
-            # Set a breakpoint at main
             bp_result = self.gdbTools.set_breakpoint(session_id, "main")
             assert isinstance(bp_result, str)
             
-            # Try to run the program
             run_result = self.gdbTools.execute_command(session_id, "run")
             assert isinstance(run_result, str)
             
-            # Get backtrace
             bt_result = self.gdbTools.get_backtrace(session_id)
             assert isinstance(bt_result, str)
             
@@ -59,7 +49,6 @@ class TestGDBMCPIntegration:
             assert isinstance(print_result, str)
             
         finally:
-            # Clean up
             self.gdbTools.terminate_session(session_id)
     
     @pytest.mark.requires_gdb
@@ -87,7 +76,6 @@ class TestGDBMCPIntegration:
                 assert "Error executing command" not in help_result
             
         finally:
-            # Clean up all sessions
             for session_id in session_ids:
                 try:
                     self.gdbTools.terminate_session(session_id)
@@ -142,7 +130,6 @@ class TestGDBMCPIntegration:
             assert isinstance(reg_result, str)
             
         finally:
-            # Clean up
             self.gdbTools.terminate_session(session_id)
     
     @pytest.mark.requires_gdb
@@ -171,7 +158,6 @@ class TestGDBMCPIntegration:
             assert isinstance(version_result, str)
             
         finally:
-            # Clean up
             self.gdbTools.terminate_session(session_id)
     
     @pytest.mark.requires_gdb
@@ -209,7 +195,6 @@ class TestGDBMCPIntegration:
             assert session_id2 in list_result
             
         finally:
-            # Clean up remaining session
             try:
                 self.gdbTools.terminate_session(session_id2)
             except:
@@ -239,7 +224,6 @@ class TestGDBMCPIntegration:
                 assert "Active GDB Sessions:" in sessions_resource
                 assert session_id in sessions_resource
                 
-                # Clean up
                 self.gdbTools.terminate_session(session_id)
                 
                 # Resource should show no sessions again

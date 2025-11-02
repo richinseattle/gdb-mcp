@@ -4,10 +4,11 @@ import logging
 import uuid
 from typing import Dict
 from pygdbmi.gdbcontroller import GdbController
+from ..base.debuggerBase import DebuggerSessionManager
 
 logger = logging.getLogger(__name__)
 
-class GDBSessionManager:
+class GDBSessionManager(DebuggerSessionManager):
     
     def __init__(self):
         self.sessions: Dict[str, GdbController] = {}

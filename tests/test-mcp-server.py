@@ -9,8 +9,7 @@ from unittest.mock import patch, MagicMock
 # Import the server components
 import sys
 sys.path.append('.')
-from modules.sessionManager import GDBSessionManager
-from modules.gdbTools import GDBTools
+from modules.gdb import GDBSessionManager, GDBTools
 
 
 class TestMCPServerIntegration:

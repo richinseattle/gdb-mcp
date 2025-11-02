@@ -8,8 +8,7 @@ for use with Claude Desktop, VSCode Copilot, or other AI assistants.
 
 import logging
 from mcp.server.fastmcp import FastMCP
-from modules.sessionManager import GDBSessionManager
-from modules.gdbTools import GDBTools
+from modules.gdb import GDBSessionManager, GDBTools
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

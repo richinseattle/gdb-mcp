@@ -1,9 +1,7 @@
 """Tests for GDB session manager."""
 
 import pytest
-import tempfile
-import os
-from modules.sessionManager import GDBSessionManager
+from modules.gdb import GDBSessionManager
 
 
 class TestGDBSessionManager:
@@ -15,7 +13,6 @@ class TestGDBSessionManager:
     
     def teardown_method(self):
         """Clean up after tests."""
-        # Terminate any remaining sessions
         for session_id in list(self.sessionManager.sessions.keys()):
             try:
                 self.sessionManager.terminate_session(session_id)
@@ -33,13 +30,11 @@ class TestGDBSessionManager:
     
     def test_create_session_with_custom_gdb_path(self):
         """Test session creation with custom GDB path."""
-        # This should work if gdb is available
         try:
             session_id = self.sessionManager.create_session("gdb")
             assert session_id is not None
             assert self.sessionManager.has_session(session_id)
         except Exception:
-            # If GDB is not available, the test should skip
             pytest.skip("GDB not available on system")
     
     def test_create_session_invalid_gdb_path(self):

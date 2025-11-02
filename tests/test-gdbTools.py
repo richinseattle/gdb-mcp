@@ -5,8 +5,8 @@ import tempfile
 import os
 import subprocess
 from pathlib import Path
-from modules.sessionManager import GDBSessionManager
-from modules.gdbTools import GDBTools, format_gdb_response
+from modules.gdb import GDBSessionManager, GDBTools
+from modules.gdb.gdbTools import format_gdb_response
 
 
 class TestGDBTools:

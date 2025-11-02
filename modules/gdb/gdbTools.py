@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Callable
 from functools import wraps
 from .sessionManager import GDBSessionManager
+from ..base.debuggerBase import DebuggerTools
 
 logger = logging.getLogger(__name__)
 
@@ -48,11 +49,12 @@ def format_gdb_response(response: List[Dict[str, Any]]) -> str:
     
     return '\n'.join(formatted_lines) if formatted_lines else "Command executed"
 
-class GDBTools:
+class GDBTools(DebuggerTools):
     """Collection of GDB debugging tools."""
     
-    def __init__(self, sessionManager: GDBSessionManager):
-        self.sessionManager = sessionManager
+    def __init__(self, session_manager: GDBSessionManager):
+        super().__init__(session_manager)
+        self.sessionManager = session_manager
     
     @handle_gdb_errors("starting GDB session")
     def start_session(self, gdb_path: str = "gdb") -> str:

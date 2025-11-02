@@ -148,7 +148,7 @@ uv run python run-tests.py --type all
 
 Check the `examples` directory for example prompts.
 
-> Note: Example binaries are compiled to `arm64` and `amd64`, pick the one that matches your system architecture.
+> Example binaries are compiled to `arm64` and `amd64`, pick the one that matches your system architecture.
 
 ## License
 

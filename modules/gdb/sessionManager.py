@@ -27,7 +27,15 @@ class GDBSessionManager(DebuggerSessionManager):
     def get_session(self, session_id: str) -> GdbController:
         if session_id not in self.sessions:
             raise ValueError(f"GDB session '{session_id}' not found. Use gdb_list_sessions to see active sessions.")
-        return self.sessions[session_id]
+        
+        # Check if session is still alive
+        gdb = self.sessions[session_id]
+        if not self._is_session_alive(gdb):
+            logger.warning(f"Session {session_id} appears to be dead, cleaning up")
+            self._cleanup_dead_session(session_id)
+            raise ValueError(f"GDB session '{session_id}' is no longer active")
+        
+        return gdb
     
     def terminate_session(self, session_id: str) -> bool:
         if session_id not in self.sessions:
@@ -43,10 +51,46 @@ class GDBSessionManager(DebuggerSessionManager):
             return False
     
     def list_sessions(self) -> list:
+        # Clean up dead sessions before listing
+        self._cleanup_dead_sessions()
         return list(self.sessions.keys())
     
     def has_session(self, session_id: str) -> bool:
         return session_id in self.sessions
+    
+    def _is_session_alive(self, gdb: GdbController) -> bool:
+        """Check if a GDB session is still alive."""
+        try:
+            # Try to send a simple command to check if the session is responsive
+            if hasattr(gdb, 'gdb_process') and gdb.gdb_process:
+                return gdb.gdb_process.poll() is None
+            return False
+        except Exception:
+            return False
+    
+    def _cleanup_dead_session(self, session_id: str):
+        """Clean up a single dead session."""
+        try:
+            if session_id in self.sessions:
+                gdb = self.sessions[session_id]
+                try:
+                    gdb.exit()
+                except Exception:
+                    pass  # Session might already be dead
+                del self.sessions[session_id]
+                logger.info(f"Cleaned up dead session: {session_id}")
+        except Exception as e:
+            logger.error(f"Error cleaning up session {session_id}: {e}")
+    
+    def _cleanup_dead_sessions(self):
+        """Clean up all dead sessions."""
+        dead_sessions = []
+        for session_id, gdb in self.sessions.items():
+            if not self._is_session_alive(gdb):
+                dead_sessions.append(session_id)
+        
+        for session_id in dead_sessions:
+            self._cleanup_dead_session(session_id)
     
     @staticmethod
     def is_available() -> bool:

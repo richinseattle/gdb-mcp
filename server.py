@@ -26,13 +26,18 @@ except Exception as e:
     debugger_tools = None
     debugger_type = None
 
+# Global GDB tools instance to ensure session consistency
+_gdb_tools_instance = None
+
 def _get_gdb_tools():
-    """Helper function to get GDB tools with error handling."""
-    try:
-        tools, _ = DebuggerFactory.create_tools('gdb')
-        return tools
-    except Exception as e:
-        raise RuntimeError(f"GDB not available: {str(e)}")
+    """Helper function to get GDB tools with error handling and singleton pattern."""
+    global _gdb_tools_instance
+    if _gdb_tools_instance is None:
+        try:
+            _gdb_tools_instance, _ = DebuggerFactory.create_tools('gdb')
+        except Exception as e:
+            raise RuntimeError(f"GDB not available: {str(e)}")
+    return _gdb_tools_instance
 
 # Unified debugger tools (work with any available debugger)
 @mcp.tool()
@@ -45,6 +50,10 @@ def debugger_start(debugger_type_param: str = None, debugger_path: str = None) -
     """Start a debugging session with auto-detection or specified debugger type."""
     if not debugger_tools:
         return "Error: No debuggers are available on this system"
+    
+    # Handle None debugger_path to prevent NoneType iteration errors
+    if debugger_path is None:
+        debugger_path = "gdb"  # Default to gdb
     
     # Use default debugger (don't create new instances to avoid session isolation)
     return debugger_tools.start_session(debugger_path)
@@ -117,13 +126,25 @@ def list_gdb_sessions() -> str:
     except Exception as e:
         return f"Error: {str(e)}"
 
+# Global LLDB tools instance to ensure session consistency
+_lldb_tools_instance = None
+
+def _get_lldb_tools():
+    """Helper function to get LLDB tools with error handling and singleton pattern."""
+    global _lldb_tools_instance
+    if _lldb_tools_instance is None:
+        try:
+            _lldb_tools_instance, _ = DebuggerFactory.create_tools('lldb')
+        except Exception as e:
+            raise RuntimeError(f"LLDB not available: {str(e)}")
+    return _lldb_tools_instance
+
 # LLDB-specific tools
 @mcp.tool()
 def lldb_start(lldb_path: str = None) -> str:
     """Start a new LLDB debugging session."""
     try:
-        tools, _ = DebuggerFactory.create_tools('lldb')
-        return tools.start_session(lldb_path)
+        return _get_lldb_tools().start_session(lldb_path)
     except Exception as e:
         return f"Error: {str(e)}"
 
@@ -131,8 +152,7 @@ def lldb_start(lldb_path: str = None) -> str:
 def lldb_terminate(session_id: str) -> str:
     """Terminate an LLDB debugging session."""
     try:
-        tools, _ = DebuggerFactory.create_tools('lldb')
-        return tools.terminate_session(session_id)
+        return _get_lldb_tools().terminate_session(session_id)
     except Exception as e:
         return f"Error: {str(e)}"
 
@@ -140,8 +160,7 @@ def lldb_terminate(session_id: str) -> str:
 def lldb_list_sessions() -> str:
     """List all active LLDB sessions."""
     try:
-        tools, _ = DebuggerFactory.create_tools('lldb')
-        return tools.list_sessions()
+        return _get_lldb_tools().list_sessions()
     except Exception as e:
         return f"Error: {str(e)}"
 
@@ -149,8 +168,7 @@ def lldb_list_sessions() -> str:
 def lldb_command(session_id: str, command: str) -> str:
     """Execute an arbitrary LLDB command."""
     try:
-        tools, _ = DebuggerFactory.create_tools('lldb')
-        return tools.execute_command(session_id, command)
+        return _get_lldb_tools().execute_command(session_id, command)
     except Exception as e:
         return f"Error: {str(e)}"
 

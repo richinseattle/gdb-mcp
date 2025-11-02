@@ -16,8 +16,17 @@ def handle_gdb_errors(operation: str) -> Callable:
         def wrapper(*args, **kwargs) -> str:
             try:
                 return func(*args, **kwargs)
+            except BrokenPipeError:
+                return f"Error {operation}: GDB session connection lost (broken pipe). The session may have crashed."
+            except ValueError as e:
+                if "not found" in str(e) or "not active" in str(e):
+                    return f"Error {operation}: {str(e)}"
+                return f"Error {operation}: Invalid parameter - {str(e)}"
             except Exception as e:
-                return f"Error {operation}: {str(e)}"
+                error_msg = str(e)
+                if "Broken pipe" in error_msg:
+                    return f"Error {operation}: GDB session connection lost. The session may have crashed."
+                return f"Error {operation}: {error_msg}"
         return wrapper
     return decorator
 
@@ -68,6 +77,7 @@ class GDBTools(DebuggerTools):
         return f"GDB session '{session_id}' not found"
     
     def list_sessions(self) -> str:
+        # This will automatically clean up dead sessions
         sessions = self.sessionManager.list_sessions()
         if not sessions:
             return "No active GDB sessions"
@@ -84,8 +94,13 @@ class GDBTools(DebuggerTools):
     @handle_gdb_errors("executing command")
     def execute_command(self, session_id: str, command: str) -> str:
         gdb = self.sessionManager.get_session(session_id)
-        response = gdb.write(command)
-        return format_gdb_response(response)
+        try:
+            response = gdb.write(command)
+            return format_gdb_response(response)
+        except BrokenPipeError:
+            # Clean up the dead session
+            self.sessionManager._cleanup_dead_session(session_id)
+            raise BrokenPipeError("GDB session connection lost")
     
     @handle_gdb_errors("attaching to process")
     def attach_to_process(self, session_id: str, pid: int) -> str:

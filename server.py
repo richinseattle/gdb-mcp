@@ -26,7 +26,6 @@ except Exception as e:
     debugger_tools = None
     debugger_type = None
 
-# Global GDB tools instance to ensure session consistency
 _gdb_tools_instance = None
 
 def _get_gdb_tools():
@@ -51,11 +50,9 @@ def debugger_start(debugger_type_param: str = None, debugger_path: str = None) -
     if not debugger_tools:
         return "Error: No debuggers are available on this system"
     
-    # Handle None debugger_path to prevent NoneType iteration errors
     if debugger_path is None:
         debugger_path = "gdb"  # Default to gdb
     
-    # Use default debugger (don't create new instances to avoid session isolation)
     return debugger_tools.start_session(debugger_path)
 
 @mcp.tool()
@@ -126,7 +123,6 @@ def list_gdb_sessions() -> str:
     except Exception as e:
         return f"Error: {str(e)}"
 
-# Global LLDB tools instance to ensure session consistency
 _lldb_tools_instance = None
 
 def _get_lldb_tools():

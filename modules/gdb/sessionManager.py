@@ -28,7 +28,6 @@ class GDBSessionManager(DebuggerSessionManager):
         if session_id not in self.sessions:
             raise ValueError(f"GDB session '{session_id}' not found. Use gdb_list_sessions to see active sessions.")
         
-        # Check if session is still alive
         gdb = self.sessions[session_id]
         if not self._is_session_alive(gdb):
             logger.warning(f"Session {session_id} appears to be dead, cleaning up")
@@ -51,7 +50,6 @@ class GDBSessionManager(DebuggerSessionManager):
             return False
     
     def list_sessions(self) -> list:
-        # Clean up dead sessions before listing
         self._cleanup_dead_sessions()
         return list(self.sessions.keys())
     
@@ -61,7 +59,6 @@ class GDBSessionManager(DebuggerSessionManager):
     def _is_session_alive(self, gdb: GdbController) -> bool:
         """Check if a GDB session is still alive."""
         try:
-            # Try to send a simple command to check if the session is responsive
             if hasattr(gdb, 'gdb_process') and gdb.gdb_process:
                 return gdb.gdb_process.poll() is None
             return False

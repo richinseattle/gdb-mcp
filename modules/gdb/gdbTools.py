@@ -77,7 +77,6 @@ class GDBTools(DebuggerTools):
         return f"GDB session '{session_id}' not found"
     
     def list_sessions(self) -> str:
-        # This will automatically clean up dead sessions
         sessions = self.sessionManager.list_sessions()
         if not sessions:
             return "No active GDB sessions"
@@ -98,7 +97,6 @@ class GDBTools(DebuggerTools):
             response = gdb.write(command)
             return format_gdb_response(response)
         except BrokenPipeError:
-            # Clean up the dead session
             self.sessionManager._cleanup_dead_session(session_id)
             raise BrokenPipeError("GDB session connection lost")
     

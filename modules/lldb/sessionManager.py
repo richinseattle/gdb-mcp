@@ -66,10 +66,6 @@ class LLDBSessionManager(DebuggerSessionManager):
                 raise RuntimeError("Failed to create LLDB debugger instance")
             
             debugger.SetAsync(False)
-            
-            # Debug logging
-            # debugger.EnableLog("lldb", ["default"])
-            
             self.sessions[session_id] = debugger
             logger.info(f"Started LLDB session: {session_id}")
             return session_id

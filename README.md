@@ -85,7 +85,7 @@ If you're not using WSL:
 This project includes experimental native LLDB support alongside GDB, with automatic debugger selection.
 
 <p align="center">
-  <img src="images/lldb-mcp.png" alt="LLDB-MCP" width="600">
+  <img src="images/multi-debugger.png" alt="Multi-Debugger MCP Server" width="600">
 </p>
 
 ### Installation

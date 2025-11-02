@@ -124,7 +124,7 @@ pip3 install mcp pygdbmi --break-system-packages
 - `gdb_list_sessions()`: List all active GDB sessions
 - `gdb_command(session_id, command)`: Execute any GDB command
 
-> **Note**: Use `*_command()` functions for all advanced debugger operations, your LLM client should already know how to use it, but it doesn't hurt to mention it.
+> Use `*_command()` functions for all advanced debugger operations, your LLM client should already know how to use it, but it doesn't hurt to mention it.
 
 ### Checking Status
 

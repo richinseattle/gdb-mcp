@@ -110,14 +110,14 @@ pip3 install mcp pygdbmi --break-system-packages
 - `debugger_list_sessions()`: List all active debugging sessions
 - `debugger_command(session_id, command)`: Execute debugger command
 
-### LLDB-Specific Tools
+### LLDB Tools
 
 - `lldb_start()`: Start new LLDB debugging session
 - `lldb_terminate(session_id)`: Terminate LLDB debugging session
 - `lldb_list_sessions()`: List all active LLDB sessions
 - `lldb_command(session_id, command)`: Execute arbitrary LLDB command
 
-### GDB-Specific Tools
+### GDB Tools
 
 - `gdb_start(gdb_path)`: Start new GDB debugging session
 - `gdb_terminate(session_id)`: Terminate GDB debugging session
@@ -133,6 +133,7 @@ You can verify debugger availability:
 ```python
 from modules.lldb import LLDBSessionManager
 from modules.gdb import GDBSessionManager
+
 print("LLDB available:", LLDBSessionManager.is_available())
 print("GDB available:", GDBSessionManager.is_available())
 ```

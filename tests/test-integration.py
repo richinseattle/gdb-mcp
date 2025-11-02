@@ -121,7 +121,6 @@ class TestGDBMCPIntegration:
                 bt_result = self.gdbTools.get_backtrace(session_id)
                 assert isinstance(bt_result, str)
             
-            # Try to examine some memory (might not work without proper context)
             mem_result = self.gdbTools.examine_memory(session_id, "&main")
             assert isinstance(mem_result, str)
             
@@ -141,7 +140,6 @@ class TestGDBMCPIntegration:
         session_id = start_result.split("Session ID: ")[1].strip()
         
         try:
-            # Try to load non-existent file
             load_result = self.gdbTools.load_program(session_id, "/nonexistent/program")
             assert "does not exist" in load_result
             

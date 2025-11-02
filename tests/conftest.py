@@ -54,7 +54,6 @@ int main(int argc, char *argv[]) {
 }
 """
     
-    # Create temporary directory and files
     temp_dir = tempfile.mkdtemp()
     source_file = os.path.join(temp_dir, "test_program.c")
     binary_file = os.path.join(temp_dir, "test_program")
@@ -63,7 +62,6 @@ int main(int argc, char *argv[]) {
     with open(source_file, 'w') as f:
         f.write(test_code)
     
-    # Try to compile
     compiled = False
     try:
         subprocess.run([

@@ -9,8 +9,7 @@ from unittest.mock import patch, MagicMock
 # Import the server components
 import sys
 sys.path.append('.')
-from modules.sessionManager import GDBSessionManager
-from modules.gdbTools import GDBTools
+from modules.gdb import GDBSessionManager, GDBTools
 
 
 class TestMCPServerIntegration:
@@ -23,7 +22,6 @@ class TestMCPServerIntegration:
     
     def teardown_method(self):
         """Clean up after tests."""
-        # Clean up any sessions
         for session_id in list(self.sessionManager.sessions.keys()):
             try:
                 self.sessionManager.terminate_session(session_id)
@@ -143,7 +141,6 @@ class TestMCPServerIntegration:
             version_result = self.gdbTools.execute_command(session_id, "show version")
             assert isinstance(version_result, str)
             
-            # Clean up
             self.gdbTools.terminate_session(session_id)
             
         except Exception as e:
@@ -196,7 +193,6 @@ class TestMCPServerIntegration:
             core_result = self.gdbTools.load_core_dump(session_id, "/nonexistent/core")
             assert "does not exist" in core_result
             
-            # Clean up
             self.gdbTools.terminate_session(session_id)
             
         except Exception:

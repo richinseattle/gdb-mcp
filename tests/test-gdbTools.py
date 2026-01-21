@@ -5,8 +5,8 @@ import tempfile
 import os
 import subprocess
 from pathlib import Path
-from modules.sessionManager import GDBSessionManager
-from modules.gdbTools import GDBTools, format_gdb_response
+from modules.gdb import GDBSessionManager, GDBTools
+from modules.gdb.gdbTools import format_gdb_response
 
 
 class TestGDBTools:
@@ -17,7 +17,6 @@ class TestGDBTools:
         self.sessionManager = GDBSessionManager()
         self.gdbTools = GDBTools(self.sessionManager)
         
-        # Create a simple test program
         self.test_program_c = """
 #include <stdio.h>
 
@@ -31,7 +30,6 @@ int main() {
     return 0;
 }
 """
-        # Create temporary test program
         self.temp_dir = tempfile.mkdtemp()
         self.test_program_path = os.path.join(self.temp_dir, "test_program.c")
         self.test_binary_path = os.path.join(self.temp_dir, "test_program")
@@ -39,7 +37,6 @@ int main() {
         with open(self.test_program_path, 'w') as f:
             f.write(self.test_program_c)
         
-        # Try to compile the test program
         try:
             subprocess.run([
                 "gcc", "-g", "-o", self.test_binary_path, self.test_program_path
@@ -57,7 +54,6 @@ int main() {
             except:
                 pass
         
-        # Clean up temporary files
         try:
             if os.path.exists(self.test_program_path):
                 os.remove(self.test_program_path)
@@ -158,7 +154,6 @@ int main() {
             
             session_id = start_result.split("Session ID: ")[1].strip()
             
-            # Try to load non-existent file
             result = self.gdbTools.load_program(session_id, "/nonexistent/program")
             assert "does not exist" in result
         except Exception:
@@ -233,10 +228,8 @@ int main() {
             # Set breakpoint
             bp_result = self.gdbTools.set_breakpoint(session_id, "main")
             # Breakpoint setting might succeed or fail depending on GDB version
-            # Just ensure no crash
             assert isinstance(bp_result, str)
             
-            # Try to get backtrace (might not work without running program)
             bt_result = self.gdbTools.get_backtrace(session_id)
             assert isinstance(bt_result, str)
             

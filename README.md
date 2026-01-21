@@ -1,6 +1,6 @@
-# GDB MCP Server
+# Multi-Debugger MCP Server (LLDB and GDB)
 
-A Model Context Protocol (MCP) server that enables LLM clients to interact with GDB for debugging and binary analysis.
+A Model Context Protocol server that provides debugging functionality for both GDB and LLDB debuggers, for use with Claude Desktop, VSCode Copilot, or other AI assistants.
 
 <p align="center">
   <img src="images/gdb-mcp.png" alt="GDB MCP Server" width="600">
@@ -67,51 +67,76 @@ If you're not using WSL:
   }
 ```
 
+### Windsurf
+
+```json
+{
+  "mcpServers": {
+    "debugger-mcp": {
+      "command": "python3",
+      "args": ["/Users/youruser/dev/GDB-MCP/server.py"]
+    }
+  }
+}
+```
+
+## Experimental LLDB Support (macOS)
+
+This project includes experimental native LLDB support alongside GDB, with automatic debugger selection.
+
+<p align="center">
+  <img src="images/multi-debugger.png" alt="Multi-Debugger MCP Server" width="600">
+</p>
+
+### Installation
+
+To enable LLDB support on macOS, install LLVM (which includes LLDB) and python via Homebrew:
+
+```bash
+# Install LLDB for supporting python3.14 bindings
+brew install llvm python3
+
+# Install MCP and debugging dependencies
+pip3 install mcp pygdbmi --break-system-packages
+```
+
 ## Available Tools
 
-### Session Management
+### Unified Tools
 
-- `gdb_start()`: Start new GDB session
-- `gdb_terminate(session_id)`: Terminate session
-- `gdb_list_sessions()`: List active sessions
+- `debugger_status()`: Show available debuggers and their status
+- `debugger_start()`: Start debugging session with auto-detected debugger
+- `debugger_terminate(session_id)`: Terminate debugging session
+- `debugger_list_sessions()`: List all active debugging sessions
+- `debugger_command(session_id, command)`: Execute debugger command
 
-### Program Loading
+### LLDB Tools
 
-- `gdb_load(session_id, program_path)`: Load program
-- `gdb_attach(session_id, pid)`: Attach to process
-- `gdb_load_core(session_id, core_file)`: Load core dump
+- `lldb_start()`: Start new LLDB debugging session
+- `lldb_terminate(session_id)`: Terminate LLDB debugging session
+- `lldb_list_sessions()`: List all active LLDB sessions
+- `lldb_command(session_id, command)`: Execute arbitrary LLDB command
 
-### Execution Control
+### GDB Tools
 
-- `gdb_continue(session_id)`: Continue execution
-- `gdb_step(session_id)`: Step into functions
-- `gdb_next(session_id)`: Step over functions
-- `gdb_finish(session_id)`: Finish current function
-
-### Debugging
-
-- `gdb_set_breakpoint(session_id, location)`: Set breakpoint
-- `gdb_backtrace(session_id)`: Show call stack
-- `gdb_print(session_id, expression)`: Print expression
-- `gdb_examine(session_id, address)`: Examine memory
-- `gdb_info_registers(session_id)`: Show registers
-
-### Advanced Analysis
-
-- `gdb_disassemble_function(session_id, function_name)`: Disassemble function
-- `gdb_disassemble_around_pc(session_id, count)`: Disassemble around PC
-- `gdb_get_local_variables(session_id)`: Get local variables
-- `gdb_get_stack_frames(session_id)`: Get stack information
-- `gdb_get_register_values(session_id)`: Get register values
-- `gdb_read_memory_bytes(session_id, address, count)`: Read memory
-- `gdb_get_thread_info(session_id)`: Get thread information
-- `gdb_get_breakpoint_list(session_id)`: List breakpoints
-- `gdb_set_watchpoint(session_id, expression)`: Set watchpoint
-- `gdb_get_symbol_info(session_id, symbol)`: Get symbol info
-
-### General
-
+- `gdb_start(gdb_path)`: Start new GDB debugging session
+- `gdb_terminate(session_id)`: Terminate GDB debugging session
+- `gdb_list_sessions()`: List all active GDB sessions
 - `gdb_command(session_id, command)`: Execute any GDB command
+
+> Use `*_command()` functions for all advanced debugger operations, your LLM client should already know how to use it, but it doesn't hurt to mention it.
+
+### Checking Status
+
+You can verify debugger availability:
+
+```python
+from modules.lldb import LLDBSessionManager
+from modules.gdb import GDBSessionManager
+
+print("LLDB available:", LLDBSessionManager.is_available())
+print("GDB available:", GDBSessionManager.is_available())
+```
 
 ## Testing
 
@@ -123,6 +148,8 @@ uv run python run-tests.py --type all
 ## Examples
 
 Check the `examples` directory for example prompts.
+
+> Example binaries are compiled to `arm64` and `amd64`, pick the one that matches your system architecture.
 
 ## License
 
